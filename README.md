@@ -30,15 +30,23 @@ columns = ["price", "quantity", "type", "timestamp"]
 
 def orderbook_collection():
     book = {}
+    
     response = requests.get('https://api.bithumb.com/public/orderbook/BTC_KRW/?count=5')
+    
     book = response.json()
+    
     data = book['data']
 
     bids = (pd.DataFrame(data['bids'])).apply(pd.to_numeric,errors='ignore')
+    
     asks = (pd.DataFrame(data['asks'])).apply(pd.to_numeric,errors='ignore')
+    
     bids.sort_values('price', ascending=True, inplace=True)
+    
     asks.sort_values('price', ascending=True, inplace=True)
+    
     bids = bids.reset_index()
+    
     del bids['index']
 
     bids['type'], asks['type'] = 0, 1
@@ -46,13 +54,17 @@ def orderbook_collection():
     df = pd.concat([bids, asks])
 
     timestamp_now = datetime.now()
+    
     df['timestamp'] = timestamp_now
 
     file_name = f"{timestamp_now.strftime('%Y-%m-%d')}-exchange-market-orderbook.csv"
 
     if (not os.path.exists(f"{file_path}/{file_name}")):
+    
       df.to_csv(f"{file_path}/{file_name}", columns=columns, sep=',', index=False)
+      
     else:
+    
       df.to_csv(f"{file_path}/{file_name}", header=False ,sep=',', index=False, mode='a')
 
     time.sleep(1)
