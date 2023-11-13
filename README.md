@@ -14,21 +14,28 @@ import pandas as pd
 import csv
 
 import os
+
 from datetime import datetime
+
 from pytz import timezone
 
 current_path = os.getcwd()
+
 file_path = f"{current_path}/jh_assignment/data"
 
 if (not os.path.isdir(f"{current_path}/jh_assignment")):
+
     os.mkdir(f"{current_path}/jh_assignment")
+    
 if (not os.path.isdir(file_path)):
+
     os.mkdir(file_path)
 
 
 columns = ["price", "quantity", "type", "timestamp"]
 
 def orderbook_collection():
+
     book = {}
     
     response = requests.get('https://api.bithumb.com/public/orderbook/BTC_KRW/?count=5')
@@ -70,4 +77,5 @@ def orderbook_collection():
     time.sleep(1)
 
 while(True):
+
     orderbook_collection()
