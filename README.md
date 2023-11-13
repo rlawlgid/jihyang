@@ -14,9 +14,6 @@ import os
 from datetime import datetime
 from pytz import timezone
 
-"""
-  데이터를 저장하기 위한 경로 생성
-"""
 current_path = os.getcwd()
 file_path = f"{current_path}/jh_assignment/data"
 
@@ -25,9 +22,6 @@ if (not os.path.isdir(f"{current_path}/jh_assignment")):
 if (not os.path.isdir(file_path)):
     os.mkdir(file_path)
 
-"""
-  orderbook 데이터를 파일에 저장하는 함수
-"""
 
 columns = ["price", "quantity", "type", "timestamp"]
 
@@ -37,14 +31,13 @@ def orderbook_collection():
     book = response.json()
     data = book['data']
 
-    # orderbook response 에 있는 bids, asks 데이터 추출 및 정렬
     bids = (pd.DataFrame(data['bids'])).apply(pd.to_numeric,errors='ignore')
     asks = (pd.DataFrame(data['asks'])).apply(pd.to_numeric,errors='ignore')
     bids.sort_values('price', ascending=True, inplace=True)
     asks.sort_values('price', ascending=True, inplace=True)
     bids = bids.reset_index()
     del bids['index']
-    # type 값 할당 (bids=0, asks=1)
+
     bids['type'], asks['type'] = 0, 1
 
     df = pd.concat([bids, asks])
